@@ -1,0 +1,47 @@
+﻿@model List<Product>
+@{
+    int count = 0;
+}
+
+<div class="container">
+
+    <h1>Products</h1>
+    <a class="btn btn-primary" asp-action="Create">Create</a>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Category</th>
+            <th scope="col">Tags</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            count++;
+            <tr>
+                <th scope="row">@count</th>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.Price</td>
+                <td>@item.Category.Name</td>
+                <td> @foreach (var tag in item.TagProducts)
+                    {
+                        @tag.Tag.Name
+                    }
+                </td>
+
+                <td>
+                    <a class="btn btn-secondary" asp-action="Update" asp-route-id=@item.Id>Update</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id=@item.Id>Delete</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+</div>
