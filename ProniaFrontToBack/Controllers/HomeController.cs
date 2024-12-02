@@ -57,6 +57,9 @@ public class HomeController : Controller
             .ThenInclude(pt => pt.Tag)
             .FirstOrDefaultAsync(p => p.Id == id);
         
+        ViewBag.ReProduct = await _context.Products
+            .Include(p=>p.ProductImages)
+            .Where(x=> x.CategoryId == product.CategoryId && x.Id != product.Id).ToListAsync();
         return View(product);
     }
 }
