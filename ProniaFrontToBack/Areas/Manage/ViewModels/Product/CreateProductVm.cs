@@ -8,4 +8,6 @@ public class CreateProductVm
     public double Price { get; set; }
     public int? CategoryId { get; set; }
     public List<int>? TagIds { get; set; }
+    public IFormFile MainPhoto { get; set; }
+    public List<IFormFile> Images { get; set; }
 }
