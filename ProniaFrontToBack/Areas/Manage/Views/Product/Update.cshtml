@@ -16,11 +16,11 @@
                 <input class="form-control" asp-for="Price">
                 <span asp-validation-for="Price" style="color: red"></span>
             </div>
-            
+
         </div>
 
         <div class="row">
-            
+
             <div class="form-group col-md-4">
                 <label asp-for="Description">Description</label>
                 <textarea class="form-control" asp-for="Description" rows="3"></textarea>
@@ -28,21 +28,64 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="CategoryId">Example select</label>
-                <select class="form-control" asp-for="CategoryId">
+                <label asp-for="CategoryId">Categories</label>
+                <select class="form-control" asp-for="CategoryId"
+                        asp-items=@(new SelectList(ViewBag.Categories, "Id", "Name"))>
                     <option>Select Category</option>
-                    @foreach (Category category in ViewBag.Categories)
-                    {
-                        <option value="@category.Id">@category.Name</option>
-                    }
                 </select>
                 <span asp-validation-for="CategoryId" style="color: red"></span>
             </div>
-            
+
+            <div class="form-group">
+                <label asp-for="TagIds">Tags</label>
+                <select class="form-control" asp-for="TagIds"
+                        asp-items=@(new SelectList(ViewBag.Tags, "Id", "Name"))></select>
+                <span asp-validation-for="TagIds" style="color: red"></span>
+            </div>
+
         </div>
 
+        <div class="row">
+            <div class="form-group col-md-4">
+                <img width="100px"
+                     src="~/Upload/Product/@Model.ProductImages?.FirstOrDefault(x => x.Primary)?.ImgUrl"/>
+                <label asp-for="MainPhoto">Main Photo</label>
+                <input class="form-control" asp-for="MainPhoto"></input>
+                <span asp-validation-for="MainPhoto" style="color: red"></span>
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="form-group col-md-4">
+                <div class="row">
+                    @foreach (var item in Model.ProductImages.Where(x => !x.Primary))
+                    {
+                        <div class="col-3 mb-2 position-relative">
+                            <input type="hidden" value="@item.ImgUrl" name="ImagesUrls"/>
+                            <img class="img-fluid rounded"
+                                 src="~/Upload/Product/@item.ImgUrl" alt="Product Image">
+                            <button class="btn btn-danger position-absolute custom-btn" style="right: 10px">X</button>
+                        </div>
+                    }
+                </div>
+
+                <label asp-for="Images">Images</label>
+                <input class="form-control" asp-for="Images"></input>
+                <span asp-validation-for="Images" style="color: red"></span>
+            </div>
+        </div>
+        
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
 </div>
+
+<script>
+    var btn = document.querySelectorAll(".custom-btn");
+    btn.forEach(b => {
+        b.addEventListener("click", function (e) {
+            e.preventDefault();
+            b.parentElement.remove()
+        })
+    });
+</script>
