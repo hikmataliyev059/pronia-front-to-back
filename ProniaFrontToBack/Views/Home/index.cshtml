@@ -879,18 +879,18 @@
                   <div class="product-item">
                     <div class="product-img">
                       <a asp-controller="Home" asp-action="Detail" asp-route-id=@item.Id>
-                          <img
-                            class="primary-img"
-                            src="~/assets/images/website-images//@item.ProductImages.FirstOrDefault(x => x.Primary)?.ImgUrl "
-                            alt="Product Images"/>
-                        
+                        <img
+                          class="primary-img"
+                          src="~/Upload/Product//@item.ProductImages.FirstOrDefault(x => x.Primary)?.ImgUrl "
+                          alt="Product Images"/>
+
                         <img
                           class="secondary-img"
-                          src="~/assets/images/website-images//@item.ProductImages.FirstOrDefault(x => x.Primary == false)?.ImgUrl "
+                          src="~/Upload/Product//@item.ProductImages.FirstOrDefault(x => x.Primary == false)?.ImgUrl "
                           alt="Product Images"/>
-                        
+
                       </a>
-                      <div class="product-add-action">  
+                      <div class="product-add-action">
                         <ul>
                           <li>
                             <a
