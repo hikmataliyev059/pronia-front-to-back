@@ -1,4 +1,6 @@
-﻿@model List<Product>
+﻿@using System.Collections
+@model List<Product>
+
 @{
     int count = 0;
 }
@@ -6,6 +8,15 @@
 <div class="container">
 
     <h1>Products</h1>
+
+    @if (TempData["error"] != null)
+    {
+        foreach (var item in (IEnumerable)TempData["error"])
+        {
+            <span class="text-danger">@item</span>
+        }
+    }
+
     <a class="btn btn-primary" asp-action="Create">Create</a>
 
     <table class="table">
@@ -17,6 +28,7 @@
             <th scope="col">Price</th>
             <th scope="col">Category</th>
             <th scope="col">Tags</th>
+            <th scope="col">Image</th>
         </tr>
         </thead>
         <tbody>
@@ -33,6 +45,13 @@
                     {
                         @tag.Tag.Name
                     }
+                </td>
+
+                <td>
+                    <div style="width:100px">
+                        <img width="100%"
+                             src="~/Upload/Product/@item.ProductImages?.FirstOrDefault(x => x.Primary)?.ImgUrl"/>
+                    </div>
                 </td>
 
                 <td>
