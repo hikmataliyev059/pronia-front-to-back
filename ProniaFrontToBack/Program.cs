@@ -9,11 +9,17 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
+        
         builder.Services.AddDbContext<AppDbContext>(opt => 
             opt.UseSqlServer(builder.Configuration.GetConnectionString("DB_URL"))
             );
         
         var app = builder.Build();
+
+        app.MapControllerRoute(
+            name:"areas",
+            pattern : "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
+            );
 
         app.MapControllerRoute(
             name:"default",
