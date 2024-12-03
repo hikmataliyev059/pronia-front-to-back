@@ -14,6 +14,43 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\manage\img\undraw_posting_photo.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\img\undraw_profile.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\img\undraw_profile_1.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\img\undraw_profile_2.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\img\undraw_profile_3.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\img\undraw_rocket.svg" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\navs\_global.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\navs\_sidebar.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\navs\_topbar.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\sb-admin-2.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\utilities\_animation.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\utilities\_background.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\utilities\_border.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\utilities\_display.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\utilities\_progress.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\utilities\_rotate.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\utilities\_text.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_buttons.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_cards.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_charts.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_dropdowns.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_error.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_footer.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_global.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_login.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_mixins.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_navs.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_utilities.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\manage\scss\_variables.scss" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\Upload\Product\" />
     </ItemGroup>
 
 </Project>
