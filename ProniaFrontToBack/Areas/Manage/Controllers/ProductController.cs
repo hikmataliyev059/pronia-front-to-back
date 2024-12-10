@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProniaFrontToBack.Areas.Manage.ViewModels.Product;
 using ProniaFrontToBack.DAL;
 using ProniaFrontToBack.Helpers.Extensions;
 using ProniaFrontToBack.Models;
 using ProductImageVm = ProniaFrontToBack.Areas.Manage.ViewModels.Product.ProductImageVm;
-
 namespace ProniaFrontToBack.Areas.Manage.Controllers;
 
 [Area("Manage")]
+[Authorize(Roles = "Admin")]
 public class ProductController : Controller
 {
     private readonly AppDbContext _appDbContext;
