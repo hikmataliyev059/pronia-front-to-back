@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using ProniaFrontToBack.Models.Base;
 
 namespace ProniaFrontToBack.Models;
@@ -10,4 +11,6 @@ public class Slider : BaseEntity
 
     public string SubTitle { get; set; }
     public string Description { get; set; }
+    [StringLength(100)] public string? ImgUrl { get; set; }
+    [NotMapped] public IFormFile File { get; set; }
 }
