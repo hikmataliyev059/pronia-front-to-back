@@ -63,14 +63,15 @@ public class CartController : Controller
         return View(cart);
     }
 
-    public async Task<IActionResult> AddBasket(int itemId)
+    [HttpPost]
+    public async Task<IActionResult> AddBasket([FromBody]int id)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest();
         }
 
-        var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == itemId);
+        var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
         if (product == null)
         {
             return NotFound();
@@ -93,7 +94,7 @@ public class CartController : Controller
                 {
                     cookieList.Add(new CookieItemVm()
                     {
-                        Id = itemId,
+                        Id = id,
                         Count = 1
                     });
                 }
@@ -104,18 +105,24 @@ public class CartController : Controller
             cookieList = new List<CookieItemVm>();
             cookieList.Add(new CookieItemVm()
             {
-                Id = itemId,
+                Id = id,
                 Count = 1
             });
         }
 
         Response.Cookies.Append(BasketCookieKey, JsonConvert.SerializeObject(cookieList));
 
-        return RedirectToAction("Index", "Home");
+        return Ok();
     }
 
     public IActionResult GetBasket()
     {
         return Content(Request.Cookies[BasketCookieKey] ?? "Basket is empty");
     }
+
+    public IActionResult Refresh()
+    {
+        return ViewComponent("Basket");
+    }
+    
 }
