@@ -64,7 +64,7 @@ public class CartController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddBasket([FromBody]int id)
+    public async Task<IActionResult> AddBasket([FromBody] int id)
     {
         if (!ModelState.IsValid)
         {
@@ -124,5 +124,16 @@ public class CartController : Controller
     {
         return ViewComponent("Basket");
     }
-    
+
+    public IActionResult GetBasketCount()
+    {
+        var cookie = Request.Cookies[BasketCookieKey];
+        List<CookieItemVm>? cookies = String.IsNullOrEmpty(cookie)
+            ? new List<CookieItemVm>()
+            : JsonConvert.DeserializeObject<List<CookieItemVm>>(cookie);
+
+        int count = cookies.Count == 0 ? 0 : cookies.Sum(x => x.Count);
+        
+        return Ok(count);
+    }
 }
