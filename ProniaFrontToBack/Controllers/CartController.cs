@@ -9,6 +9,7 @@ namespace ProniaFrontToBack.Controllers;
 public class CartController : Controller
 {
     private readonly AppDbContext _context;
+    private const string BasketCookieKey = "basket";
 
     public CartController(AppDbContext context)
     {
@@ -17,35 +18,85 @@ public class CartController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        var json = Request.Cookies[BasketCookieKey];
+        List<CookieItemVm>? cookies = new List<CookieItemVm>();
+        List<CookieItemVm> deleteItems = new List<CookieItemVm>();
+        List<CartVm> cart = new List<CartVm>();
+
+        if (json != null)
+        {
+            cookies = JsonConvert.DeserializeObject<List<CookieItemVm>>(json);
+        }
+
+        if (cookies != null && cookies.Count > 0)
+        {
+            cookies.ForEach(c =>
+            {
+                var product = _context.Products
+                    .Include(p => p.ProductImages)
+                    .FirstOrDefault(x => x.Id == c.Id);
+
+                if (product == null)
+                {
+                    deleteItems.Add(c);
+                }
+                else
+                {
+                    cart.Add(new CartVm()
+                    {
+                        Id = c.Id,
+                        Name = product.Name,
+                        Price = product.Price,
+                        ImgUrl = product.ProductImages.FirstOrDefault(p => p.Primary)?.ImgUrl,
+                        Count = c.Count
+                    });
+                }
+            });
+
+            if (deleteItems.Count > 0)
+            {
+                deleteItems.ForEach(d => { cookies.Remove(d); });
+                Response.Cookies.Append(BasketCookieKey, JsonConvert.SerializeObject(cookies));
+            }
+        }
+
+        return View(cart);
     }
 
     public async Task<IActionResult> AddBasket(int itemId)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
         var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == itemId);
         if (product == null)
         {
             return NotFound();
         }
 
-        List<CookieItemVm> cookieList;
+        List<CookieItemVm>? cookieList;
 
-        var basket = Request.Cookies["basket"];
+        var basket = Request.Cookies[BasketCookieKey];
         if (basket != null)
         {
             cookieList = JsonConvert.DeserializeObject<List<CookieItemVm>>(basket);
-            var existproduct = cookieList.FirstOrDefault(p => p.Id == product.Id);
-            if (existproduct != null)
+            if (cookieList != null)
             {
-                existproduct.Count += 1;
-            }
-            else
-            {
-                cookieList.Add(new CookieItemVm()
+                var existproduct = cookieList.FirstOrDefault(p => p.Id == product.Id);
+                if (existproduct != null)
                 {
-                    Id = itemId,
-                    Count = 1
-                });
+                    existproduct.Count += 1;
+                }
+                else
+                {
+                    cookieList.Add(new CookieItemVm()
+                    {
+                        Id = itemId,
+                        Count = 1
+                    });
+                }
             }
         }
         else
@@ -58,13 +109,13 @@ public class CartController : Controller
             });
         }
 
-        Response.Cookies.Append("basket", JsonConvert.SerializeObject(cookieList));
+        Response.Cookies.Append(BasketCookieKey, JsonConvert.SerializeObject(cookieList));
 
         return RedirectToAction("Index", "Home");
     }
 
     public IActionResult GetBasket()
     {
-        return Content(Request.Cookies["basket"]);
+        return Content(Request.Cookies[BasketCookieKey] ?? "Basket is empty");
     }
 }
