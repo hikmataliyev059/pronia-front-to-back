@@ -152,7 +152,7 @@
                                     <li class="minicart-wrap me-3 me-lg-0">
                                         <a href="#miniCart" class="minicart-btn toolbar-btn">
                                             <i class="pe-7s-shopbag"></i>
-                                            <span class="quantity">3</span>
+                                            add dynamic basket count update using fetch API and DOMContentLoaded event                                            <span class="quantity basket-quantity">0</span>
                                         </a>
                                     </li>
                                     <li class="mobile-menu_wrap d-block d-lg-none">
@@ -486,7 +486,7 @@
                                     <li class="minicart-wrap me-3 me-lg-0">
                                         <a href="#miniCart" class="minicart-btn toolbar-btn">
                                             <i class="pe-7s-shopbag"></i>
-                                            <span class="quantity">3</span>
+                                            <span class="quantity basket-quantity">0</span>
                                         </a>
                                     </li>
                                     <li class="mobile-menu_wrap d-block d-lg-none">
@@ -1161,12 +1161,13 @@
 <script src="~/assets/js/main.js"></script>
 
 <script>
+    
     document.querySelectorAll('.add-basket')
         .forEach(b => {
             b.addEventListener('click', function (e) {
                 e.preventDefault();
 
-                var productId = this.getAttribute('data-product-id')
+                const productId = this.getAttribute('data-product-id');
                 console.log(productId)
                 addBasket(productId)
             })
@@ -1181,6 +1182,7 @@
             })
 
             await refreshBasket()
+            await updateBasketCount();
 
         } catch {
         }
@@ -1194,6 +1196,24 @@
             console.log("False")
         }
     }
+
+    async function updateBasketCount() {
+        const response = await fetch('Cart/GetBasketCount/');
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data)
+            document.querySelectorAll('.basket-quantity')
+                .forEach(x => {
+                    x.innerHTML = data;
+                })
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        updateBasketCount()
+    })
+    
 </script>
 
 </body>
