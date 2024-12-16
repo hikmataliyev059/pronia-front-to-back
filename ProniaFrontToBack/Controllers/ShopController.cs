@@ -15,7 +15,7 @@ public class ShopController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index(string? search, int? order)
+    public async Task<IActionResult> Index(string? search, int? order, int? categoryId)
     {
         IQueryable<Product> query = _context.Products
             .Include(p => p.ProductImages)
@@ -39,10 +39,18 @@ public class ShopController : Controller
             query = query.Where(p => p.Name.ToLower().Contains(search.ToLower()));
         }
 
+        if (categoryId != null)
+        {
+            query = query.Where(p => p.CategoryId == categoryId);
+        }
+
         ShopVm shopVm = new ShopVm()
         {
             Categories = await _context.Categories.Include(c => c.Products).ToListAsync(),
             Products = await query.ToListAsync(),
+            CategoryId = categoryId,
+            Order = order,
+            Search = search
         };
         return View(shopVm);
     }
