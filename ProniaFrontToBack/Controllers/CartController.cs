@@ -128,8 +128,7 @@ public class CartController : Controller
     public IActionResult GetBasketCount()
     {
         var cookie = Request.Cookies[BasketCookieKey];
-        List<CookieItemVm>? cookies = String.IsNullOrEmpty(cookie)
-            ? new List<CookieItemVm>()
+        List<CookieItemVm>? cookies = String.IsNullOrEmpty(cookie) ? new List<CookieItemVm>()
             : JsonConvert.DeserializeObject<List<CookieItemVm>>(cookie);
 
         int count = cookies.Count == 0 ? 0 : cookies.Sum(x => x.Count);

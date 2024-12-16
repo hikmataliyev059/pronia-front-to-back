@@ -15,8 +15,16 @@ public class HomeController : Controller
         _context = appDbContext;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        Response.Cookies.Append("Elvin", "Salam", new CookieOptions()
+        {
+            MaxAge = TimeSpan.FromHours(1)
+        });
+        
+        HttpContext.Session.SetString("ab107","perfect");
+
+
         List<Slider> sliders = new List<Slider>();
         Slider slider1 = new Slider()
         {
@@ -33,8 +41,8 @@ public class HomeController : Controller
         sliders.Add(slider1);
         sliders.Add(slider2);
 
-
-        List<Product> products = _context.Products.Include(p => p.ProductImages).ToList();
+        List<Product> products =
+            await _context.Products.Include(p => p.ProductImages).ToListAsync();
         HomeVm vm = new HomeVm()
         {
             Sliders = sliders,
@@ -45,21 +53,29 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Detail(int? id)
     {
+        Console.WriteLine(HttpContext.Session.GetString("ab107"));
+        
+        var data = Request.Cookies["Elvin"];
+        if (data == null)
+        {
+            return NotFound();
+        }
+
         if (id == null)
         {
             return NotFound();
         }
-        
+
         var product = await _context.Products
             .Include(p => p.Category)
             .Include(p => p.ProductImages)
             .Include(p => p.TagProducts)
             .ThenInclude(pt => pt.Tag)
             .FirstOrDefaultAsync(p => p.Id == id);
-        
+
         ViewBag.ReProduct = await _context.Products
-            .Include(p=>p.ProductImages)
-            .Where(x=> x.CategoryId == product.CategoryId && x.Id != product.Id).ToListAsync();
+            .Include(p => p.ProductImages)
+            .Where(x => x.CategoryId == product.CategoryId && x.Id != product.Id).ToListAsync();
         return View(product);
     }
 }
