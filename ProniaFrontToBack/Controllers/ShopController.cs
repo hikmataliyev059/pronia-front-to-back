@@ -15,11 +15,24 @@ public class ShopController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index(string? search)
+    public async Task<IActionResult> Index(string? search, int? order)
     {
         IQueryable<Product> query = _context.Products
             .Include(p => p.ProductImages)
             .AsQueryable();
+
+        switch (order)
+        {
+            case 1:
+                query = query.OrderBy(p => p.Name);
+                break;
+            case 2:
+                query = query.OrderBy(p => p.Price);
+                break;
+            case 3:
+                query = query.OrderByDescending(p => p.Id);
+                break;
+        }
 
         if (!String.IsNullOrEmpty(search))
         {
