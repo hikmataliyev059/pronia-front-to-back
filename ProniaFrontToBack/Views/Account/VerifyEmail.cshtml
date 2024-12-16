@@ -1,0 +1,32 @@
+﻿@if (ViewData["TimeRemaining"] != null)
+{
+    <div class="alert alert-info">
+        @ViewData["TimeRemaining"]
+    </div>
+}
+
+@if (TempData["ResendSuccess"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["ResendSuccess"]
+    </div>
+}
+
+@if (ViewData["BlockMessage"] != null)
+{
+    <div class="alert alert-warning">
+        @ViewData["BlockMessage"]
+    </div>
+}
+
+<form asp-action="VerifyEmail" method="post">
+    <div class="form-group">
+        <label for="verificationCode">Enter Verification Code</label>
+        <input type="text" class="form-control" id="verificationCode" name="verificationCode" required />
+    </div>
+    <button type="submit" class="btn btn-success">Verify</button>
+</form>
+
+<form asp-action="ResendVerificationCode" method="post" style="margin-top: 15px;">
+    <button type="submit" class="btn btn-primary">Resend Verification Code</button>
+</form>
