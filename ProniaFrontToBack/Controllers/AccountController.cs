@@ -10,7 +10,6 @@ using IMailService = ProniaFrontToBack.Services.Abstractions.IMailService;
 namespace ProniaFrontToBack.Controllers;
 
 public class AccountController : Controller
-
 {
     private readonly AppDbContext _appDbContext;
     private readonly UserManager<AppUser> _userManager;
@@ -58,15 +57,27 @@ public class AccountController : Controller
             return View();
         }
 
-        // await _userManager.AddToRoleAsync(user, UserRoles.Admin.ToString());
-        // bu ilk defe yarananda yazilir ki, ilk qeydiyyatdan kecen admin olsun qalani member
-        // sonra silirik Admin yerine Member yazaciyiq
+        var verificationCode = new Random().Next(100000, 999999).ToString();
+        user.VerificationCode = verificationCode;
+        user.VerificationCodeExpireTime = DateTime.UtcNow.AddMinutes(1);
+
+        await _userManager.UpdateAsync(user);
+
+        var mailRequest = new MailRequest
+        {
+            ToEmail = user.Email,
+            Subject = "Email Verification Code",
+            Body = $"Your verification code is: {verificationCode}"
+        };
+        await _mailService.SendEmailAsync(mailRequest);
 
         await _userManager.AddToRoleAsync(user, UserRoles.Member.ToString());
 
         // await _signInManager.SignInAsync(user, true);
 
-        return RedirectToAction("Login");
+
+        TempData["UserId"] = user.Id;
+        return RedirectToAction("VerifyEmail");
     }
 
     public async Task<IActionResult> LogOut()
@@ -94,6 +105,14 @@ public class AccountController : Controller
         if (user == null)
         {
             ModelState.AddModelError("", "Invalid username or password.");
+            return View();
+        }
+
+        var result1 = await _signInManager.PasswordSignInAsync
+            (vm.EmailOrUsername, vm.Password, vm.RememberMe, false);
+        if (result1.IsNotAllowed)
+        {
+            ModelState.AddModelError("", "Your email is not verified.");
             return View();
         }
 
@@ -151,12 +170,7 @@ public class AccountController : Controller
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(appUser);
-        // object userStat = new
-        // {
-        //     userId = appUser.Id,
-        //     token = token,
-        // };    bunu mlm yazib uzun yoldu 155 ci setr ucun yazmisdi amma men yazdigim daha optimaldi
-
+        
         var link = Url.Action("ResetPassword", "Account",
             new { userId = appUser.Id, Token = token }, protocol: HttpContext.Request.Scheme);
 
@@ -175,8 +189,7 @@ public class AccountController : Controller
             Subject = "Reset Your Password - Pronia Support",
             Body = emailBody
         };
-        // normalda Body hissesine a href yazib sade gondermek olardi ozum template falan verdim code uzandi 163-170
-
+        
         await _mailService.SendEmailAsync(mailRequest);
 
         return Ok("Reset password email sent.");
@@ -225,16 +238,141 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-    public async Task<IActionResult> ConfirmEmail(string email)
+
+    public IActionResult VerifyEmail()
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> VerifyEmail(string verificationCode)
+    {
+        var userId = TempData["UserId"]?.ToString();
+        if (userId == null)
+        {
+            return RedirectToAction("Register");
+        }
+
+        TempData.Keep("UserId");
+
+        var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
-            return NotFound("User Not Found");
+            ModelState.AddModelError("", "User not found.");
+            return View();
+        }
+
+        if (user.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow)
+        {
+            var lockoutEnd = user.LockoutEnd?.ToLocalTime();
+            ModelState.AddModelError("", $"You are temporarily blocked. Try again at {lockoutEnd}.");
+            return View();
+        }
+
+        if (user.VerificationCodeExpireTime != null && DateTime.UtcNow < user.VerificationCodeExpireTime)
+        {
+            var remainingTime = user.VerificationCodeExpireTime.Value - DateTime.UtcNow;
+            ViewData["TimeRemaining"] =
+                $"You have {remainingTime.Minutes} minute(s) and " +
+                $"{remainingTime.Seconds} second(s) left to enter the code.";
+        }
+        else
+        {
+            ModelState.AddModelError
+                ("", "The verification code has expired. Please request a new code.");
+            return View();
+        }
+
+        if (user.VerificationCode != verificationCode)
+        {
+            user.AccessFailedCount++;
+            if (user.AccessFailedCount >= 5)
+            {
+                user.LockoutEnd = DateTime.UtcNow.AddMinutes(1);
+                user.AccessFailedCount = 0;
+                await _userManager.UpdateAsync(user);
+                ModelState.AddModelError
+                    ("", "Too many failed attempts. You are temporarily blocked for 1 minute.");
+                return View();
+            }
+
+            await _userManager.UpdateAsync(user);
+            ModelState.AddModelError("",
+                $"Invalid verification code. You have {5 - user.AccessFailedCount} attempt(s) remaining.");
+            return View();
         }
 
         user.EmailConfirmed = true;
-        await _appDbContext.SaveChangesAsync();
-        return RedirectToAction(nameof(Login));
+        user.VerificationCode = null;
+        user.IsVerified = true;
+        user.AccessFailedCount = 0;
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            ModelState.AddModelError("", "Failed to update user.");
+            return View();
+        }
+
+        await _signInManager.SignInAsync(user, isPersistent: false);
+        return RedirectToAction("Index", "Home");
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> ResendVerificationCode()
+    {
+        var userId = TempData["UserId"]?.ToString();
+        if (userId == null)
+        {
+            return RedirectToAction("Register");
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            ModelState.AddModelError("", "User not found.");
+            return RedirectToAction("Register");
+        }
+        
+        if (user.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow)
+        {
+            ModelState.AddModelError("",
+                $"You are temporarily blocked. Try again at {user.LockoutEnd?.ToLocalTime()}.");
+            TempData.Keep("UserId");
+            return RedirectToAction("VerifyEmail");
+        }
+
+        var verificationCodeLimit = 3;
+        var verificationTimeLimit = TimeSpan.FromMinutes(5);
+
+        if (user.VerificationCodeGeneratedAt.HasValue &&
+            DateTime.UtcNow - user.VerificationCodeGeneratedAt.Value < verificationTimeLimit)
+        {
+            ModelState.AddModelError
+            ("", $"Please wait {verificationTimeLimit.Minutes} " +
+                 $"minute(s) before requesting another verification code.");
+            TempData.Keep("UserId");
+            return RedirectToAction("VerifyEmail");
+        }
+
+        var newCode = new Random().Next(100000, 999999).ToString();
+        user.VerificationCode = newCode;
+        user.VerificationCodeExpireTime =
+            DateTime.UtcNow.AddMinutes(1);
+        user.VerificationCodeGeneratedAt = DateTime.UtcNow;
+        await _userManager.UpdateAsync(user);
+
+        var mailRequest = new MailRequest
+        {
+            ToEmail = user.Email,
+            Subject = "New Verification Code",
+            Body = $"Your new verification code is: {newCode}"
+        };
+        await _mailService.SendEmailAsync(mailRequest);
+
+        TempData.Keep("UserId");
+        TempData["ResendSuccess"] = "A new verification code has been sent to your email.";
+        return RedirectToAction("VerifyEmail");
     }
 }
