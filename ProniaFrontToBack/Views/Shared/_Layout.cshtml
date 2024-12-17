@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@inject LayoutService LayoutService
+
+@{
+    Dictionary<string, string> setting = await LayoutService.GetSettings();
+}
+
+<!DOCTYPE html>
 <html lang="zxx">
 <head>
     <meta charset="UTF-8"/>
@@ -90,11 +96,11 @@
                         <div class="header-middle-wrap position-relative">
                             <div class="header-contact d-none d-lg-flex">
                                 <i class="pe-7s-call"></i>
-                                <a href="tel://+00-123-456-789">+00 123 456 789</a>
+                                <a href="tel://@setting["Phone"]">@setting["Phone"]</a>
                             </div>
 
                             <a href="index.html" class="header-logo">
-                                <img src="~/assets/images/logo/dark.png" alt="Header Logo"/>
+                                <img src="~/assets/images/logo/@setting["Logo"]" alt="Header Logo"/>
                             </a>
 
                             <div class="header-right">
@@ -104,7 +110,7 @@
                                            class="search-btn bt"
                                            data-bs-toggle="modal"
                                            data-bs-target="#exampleModal">
-                                            <i class="pe-7s-search"></i>
+                                            @Html.Raw(setting["Icon"])
                                         </a>
                                     </li>
                                     <li class="dropdown d-none d-lg-block">
@@ -152,7 +158,7 @@
                                     <li class="minicart-wrap me-3 me-lg-0">
                                         <a href="#miniCart" class="minicart-btn toolbar-btn">
                                             <i class="pe-7s-shopbag"></i>
-                                            add dynamic basket count update using fetch API and DOMContentLoaded event                                            <span class="quantity basket-quantity">0</span>
+                                            <span class="quantity basket-quantity">0</span>
                                         </a>
                                     </li>
                                     <li class="mobile-menu_wrap d-block d-lg-none">
@@ -175,7 +181,7 @@
                             <nav class="main-nav">
                                 <ul>
                                     <li class="drop-holder">
-                                        <a href="index.html">Home</a>
+                                        <a asp-controller="Home" asp-action="Index">Home</a>
                                         <ul class="drop-menu">
                                             <li>
                                                 <a href="index.html">Home One</a>
@@ -186,7 +192,7 @@
                                         </ul>
                                     </li>
                                     <li class="megamenu-holder">
-                                        <a href="shop.html">Shop</a>
+                                        <a asp-controller="Shop" asp-action="Index">Shop</a>
                                         <ul class="drop-menu megamenu">
                                             <li>
                                                 <span class="title">Shop Layout</span>
@@ -272,7 +278,7 @@
                                         </ul>
                                     </li>
                                     <li class="drop-holder">
-                                        <a href="blog.html">Blog</a>
+                                        <a asp-controller="Home" asp-action="Index">Blog</a>
                                         <ul class="drop-menu">
                                             <li>
                                                 <a href="blog-listview.html">Blog List View</a>
@@ -283,10 +289,10 @@
                                         </ul>
                                     </li>
                                     <li>
-                                        <a href="about.html">About Us</a>
+                                        <a asp-controller="Home" asp-action="Index">About Us</a>
                                     </li>
                                     <li class="drop-holder">
-                                        <a href="#">Pages</a>
+                                        <a asp-controller="Home" asp-action="Index">Pages</a>
                                         <ul class="drop-menu">
                                             <li>
                                                 <a href="faq.html">FAQ</a>
@@ -839,7 +845,7 @@
                             <div class="social-link with-border">
                                 <ul>
                                     <li>
-                                        <a href="#" data-tippy="Facebook" data-tippy-inertia="true"
+                                        <a href="@setting["Facebook"]" data-tippy="Facebook" data-tippy-inertia="true"
                                            data-tippy-animation="shift-away"
                                            data-tippy-delay="50"
                                            data-tippy-arrow="true"
@@ -947,10 +953,10 @@
                     <div class="col-lg-3 pt-40">
                         <div class="footer-contact-info">
                             <h3 class="footer-widget-title">Got Question? Call Us</h3>
-                            <a class="number" href="tel://123-456-789">123 456 789</a>
+                            <a class="number" href="tel://@setting["Phone"]">@setting["Phone"]</a>
                             <div class="address">
                                 <ul>
-                                    <li>Your Address Goes Here</li>
+                                    <li>@setting["Address"]</li>
                                 </ul>
                             </div>
                         </div>
@@ -1161,7 +1167,7 @@
 <script src="~/assets/js/main.js"></script>
 
 <script>
-    
+
     document.querySelectorAll('.add-basket')
         .forEach(b => {
             b.addEventListener('click', function (e) {
@@ -1172,6 +1178,7 @@
                 addBasket(productId)
             })
         })
+
 
     async function addBasket(productId) {
         try {
@@ -1213,7 +1220,7 @@
     window.addEventListener('DOMContentLoaded', () => {
         updateBasketCount()
     })
-    
+
 </script>
 
 </body>
