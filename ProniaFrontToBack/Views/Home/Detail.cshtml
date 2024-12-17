@@ -6,10 +6,7 @@
 
 <!-- Begin Main Content Area  -->
 <main class="main-content">
-  <div
-    class="breadcrumb-area breadcrumb-height"
-    data-bg-image="~/assets/images/breadcrumb/bg/1-1-1919x388.jpg"
-  >
+  <div class="breadcrumb-area breadcrumb-height" data-bg-image="~/assets/images/breadcrumb/bg/1-1-1919x388.jpg">
     <div class="container h-100">
       <div class="row h-100">
         <div class="col-lg-12">
@@ -96,25 +93,15 @@
                 <a href="#">( 1 Review )</a>
               </div>
             </div>
-            <p class="short-desc">
-              @Model.Description
-            </p>
+            <p class="short-desc">@Model.Description</p>
             <ul class="quantity-with-btn">
               <li class="quantity">
                 <div class="cart-plus-minus">
-                  <input
-                    class="cart-plus-minus-box"
-                    value="1"
-                    type="text"
-                  />
+                  <input class="cart-plus-minus-box" value="1" type="text"/>
                 </div>
               </li>
               <li class="add-to-cart">
-                <a
-                  class="btn btn-custom-size lg-size btn-pronia-primary"
-                  href="cart.html"
-                >Add to cart</a
-                >
+                <a class="btn btn-custom-size lg-size btn-pronia-primary" href="cart.html">Add to cart</a>
               </li>
               <li class="wishlist-btn-wrap">
                 <a class="custom-circle-btn" href="wishlist.html">
@@ -130,44 +117,26 @@
             <ul class="service-item-wrap">
               <li class="service-item">
                 <div class="service-img">
-                  <img
-                    src="~/assets/images/website-images/car.png"
-                    alt="Shipping Icon"
-                  />
+                  <img src="~/assets/images/website-images/car.png" alt="Shipping Icon"/>
                 </div>
                 <div class="service-content">
-                        <span class="title"
-                        >Free <br/>
-                          Shipping</span
-                        >
+                        <span class="title">Free <br/>Shipping</span>
                 </div>
               </li>
               <li class="service-item">
                 <div class="service-img">
-                  <img
-                    src="~/assets/images/website-images/card.png"
-                    alt="Shipping Icon"
-                  />
+                  <img src="~/assets/images/website-images/card.png" alt="Shipping Icon"/>
                 </div>
                 <div class="service-content">
-                        <span class="title"
-                        >Safe <br/>
-                          Payment</span
-                        >
+                  <span class="title">Safe <br/>Payment</span>
                 </div>
               </li>
               <li class="service-item">
                 <div class="service-img">
-                  <img
-                    src="~/assets/images/website-images/service.png"
-                    alt="Shipping Icon"
-                  />
+                  <img src="~/assets/images/website-images/service.png" alt="Shipping Icon"/>
                 </div>
                 <div class="service-content">
-                        <span class="title"
-                        >Safe <br/>
-                          Payment</span
-                        >
+                        <span class="title">Safe <br/>Payment</span>
                 </div>
               </li>
             </ul>
@@ -200,9 +169,7 @@
                 }
               </ul>
             </div>
-            <div
-              class="product-category social-link align-items-center pb-0"
-            >
+            <div class="product-category social-link align-items-center pb-0">
               <span class="title pe-3">Share:</span>
               <ul>
                 <li>
@@ -521,94 +488,11 @@
             text. It has roots in a piece of classical Latin literature
           </p>
         </div>
+
         <div class="col-lg-12">
-          <div class="swiper-container product-slider">
-            <div class="swiper-wrapper">
-
-              @foreach (Product item in ViewBag.ReProduct)
-              {
-                <div class="swiper-slide product-item">
-                  <div class="product-img">
-                    <a asp-controller="Home" asp-action="Detail" asp-route-id=@item.Id>
-                      <img
-                        class="primary-img"
-                        src="~/Upload/Product//@item.ProductImages.FirstOrDefault(x => x.Primary)?.ImgUrl "
-                        alt="Product Images"/>
-
-                      <img
-                        class="secondary-img"
-                        src="~/Upload/Product//@item.ProductImages.FirstOrDefault(x => x.Primary == false)?.ImgUrl "
-                        alt="Product Images"/>
-
-                    </a>
-                    <div class="product-add-action">
-                      <ul>
-                        <li>
-                          <a
-                            href="wishlist.html"
-                            data-tippy="Add to wishlist"
-                            data-tippy-inertia="true"
-                            data-tippy-animation="shift-away"
-                            data-tippy-delay="50"
-                            data-tippy-arrow="true"
-                            data-tippy-theme="sharpborder">
-                            <i class="pe-7s-like"></i>
-                          </a>
-                        </li>
-                        <li
-                          class="quuickview-btn"
-                          data-bs-toggle="modal"
-                          data-bs-target="#quickModal">
-                          <a
-                            href="#"
-                            data-tippy="Quickview"
-                            data-tippy-inertia="true"
-                            data-tippy-animation="shift-away"
-                            data-tippy-delay="50"
-                            data-tippy-arrow="true"
-                            data-tippy-theme="sharpborder">
-                            <i class="pe-7s-look"></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="cart.html"
-                            data-tippy="Add to cart"
-                            data-tippy-inertia="true"
-                            data-tippy-animation="shift-away"
-                            data-tippy-delay="50"
-                            data-tippy-arrow="true"
-                            data-tippy-theme="sharpborder">
-                            <i class="pe-7s-cart"></i>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="product-content">
-                    <a
-                      class="product-name"
-                      href="single-product-variable.html">@item.Name</a
-                    >
-                    <div class="price-box pb-1">
-                      <span class="new-price">$23.45</span>
-                    </div>
-                    <div class="rating-box">
-                      <ul>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              }
-
-            </div>
-          </div>
+          @await Html.PartialAsync("_ProductPartialView", ViewBag.ReProduct as List<Product>)
         </div>
+
       </div>
     </div>
   </div>
