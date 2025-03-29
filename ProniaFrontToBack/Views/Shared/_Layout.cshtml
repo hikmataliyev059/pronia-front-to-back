@@ -1220,6 +1220,26 @@
     window.addEventListener('DOMContentLoaded', () => {
         updateBasketCount()
     })
+    
+    
+
+        async function FilterSearchTerm(search) {
+            var response = await fetch(`Shop/Filter?search/=${search}`)
+    
+            if (response.ok) {
+                var data = await response.text()
+                document.getElementById('filter-result').innerHTML = data
+            }
+        }
+    
+        var form = document.querySelector('.custom-search');
+        var search = document.getElementById('searchValue');
+    
+        search.addEventListener("keyup", async function (e) {
+            var search = document.getElementById('searchValue').value
+            console.log(search)
+            await FilterSearchTerm(search)
+        })
 
 </script>
 
