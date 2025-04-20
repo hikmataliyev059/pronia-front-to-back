@@ -17,7 +17,7 @@ public class AccountController : Controller
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IMailService _mailService;
 
-    public AccountController(AppDbContext appDbContext, UserManager<AppUser> userManager,
+    public AccountController(UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager, IMailService mailService)
     {
         _appDbContext = appDbContext;
